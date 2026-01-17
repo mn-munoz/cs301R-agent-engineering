@@ -1,10 +1,27 @@
+from time import time
 from openai import Client
 import argparse
 from pathlib import Path
-import sys
+from usage import print_usage
 
-def main():
-    pass
+
+
+def main(model: str, prompt: str, text: str):
+    client = Client()
+    prompt += text
+    
+    start = time()
+    response = client.responses.create(
+        model=model,
+        input=prompt,
+        reasoning={'effort': 'low'}
+    )
+    print(response.output_text)
+
+    print(f'{round(time()-start, 2)} seconds elapsed')
+    print_usage(model, response.usage)
+    
+    
 
 if __name__ == "__main__":
     # Assuming two arguments: One prompt, one input file
@@ -16,10 +33,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     current_dir = Path(__file__).resolve().parent
-    prompt_path = current_dir / args.prompt_file
-    input_path = current_dir / args.input_file
+    args.prompt_path = current_dir / args.prompt_file
+    args.input_path = current_dir / args.input_file
     
-    print(prompt_path.read_text())
-    print(input_path.read_text())
-    
-    main()
+    main(args.model, args.prompt_file.read_text(), args.input_file.read_text())
