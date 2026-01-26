@@ -3,8 +3,7 @@ from openai import Client
 import argparse
 from pathlib import Path
 from usage import print_usage
-
-
+import json
 
 def main(model: str, prompt: str, text: str):
     client = Client()
@@ -14,7 +13,7 @@ def main(model: str, prompt: str, text: str):
     response = client.responses.create(
         model=model,
         input=prompt,
-        reasoning={'effort': 'low'}
+        # reasoning={'effort': 'low'}
     )
     print(response.output_text)
 
@@ -33,7 +32,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     current_dir = Path(__file__).resolve().parent
-    args.prompt_path = current_dir / args.prompt_file
-    args.input_path = current_dir / args.input_file
-    
+    args.prompt_file = current_dir / args.prompt_file
+    args.input_file = current_dir / args.input_file
+
     main(args.model, args.prompt_file.read_text(), args.input_file.read_text())
