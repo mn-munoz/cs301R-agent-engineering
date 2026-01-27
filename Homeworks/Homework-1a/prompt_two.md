@@ -1,0 +1,1 @@
+Create an ascii drawing of a cat
