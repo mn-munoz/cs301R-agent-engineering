@@ -39,7 +39,7 @@ def main(model: str, prompt: str):
         print(f"{'-' * 50}\nEXPECTED: {row.label}")
         response = client.responses.create(
             model=model,
-            input=row.prompt,
+            input=row.prompt, # type: ignore
             reasoning={'effort': 'low'}
         )
         print(response.output_text)
