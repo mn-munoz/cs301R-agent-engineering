@@ -5,6 +5,8 @@ from pathlib import Path
 from usage import print_usage
 import json
 
+SCHEMA = {}
+
 def main(model: str, prompt: str, text: str):
     client = Client()
     prompt += text
@@ -13,7 +15,8 @@ def main(model: str, prompt: str, text: str):
     response = client.responses.create(
         model=model,
         input=prompt,
-        # reasoning={'effort': 'low'}
+        # reasoning={'effort': 'low'},
+        
     )
     print(response.output_text)
 
