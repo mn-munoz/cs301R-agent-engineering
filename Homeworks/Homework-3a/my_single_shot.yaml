@@ -1,0 +1,7 @@
+model: gpt-5-nano
+tools: []
+kwargs:
+  reasoning:
+    effort: low
+prompt: |
+  Given an input for the theme of a haiku, write a haiku.

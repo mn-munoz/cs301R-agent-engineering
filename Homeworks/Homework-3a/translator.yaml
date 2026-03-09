@@ -1,0 +1,7 @@
+model: gpt-5-nano
+tools: []
+kwargs:
+  reasoning:
+    effort: low
+prompt: |
+  Given a haiku, translate it into Spanish. Additionally, ensure that the structure of the haiku (5-7-5 syllables) is preserved in the translation.
