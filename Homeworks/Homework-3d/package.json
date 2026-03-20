@@ -1,0 +1,18 @@
+{
+  "name": "discord-name-finder",
+  "version": "1.0.0",
+  "description": "Discord bot that watches one channel for a keyword and extracts the character name.",
+  "type": "module",
+  "main": "src/bot.js",
+  "scripts": {
+    "start": "node src/bot.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0"
+  }
+}

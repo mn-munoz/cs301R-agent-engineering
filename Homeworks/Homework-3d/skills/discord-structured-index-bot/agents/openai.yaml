@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discord Structured Index Bot"
+  short_description: "Build Discord bots that index structured posts"
+  default_prompt: "Use $discord-structured-index-bot to build or adapt a Discord bot that parses structured posts and maintains a summary or index channel."
