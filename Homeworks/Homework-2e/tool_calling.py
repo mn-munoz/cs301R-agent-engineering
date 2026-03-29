@@ -37,11 +37,12 @@ class ChatAgent:
         self._history.append({'role': 'user', 'content': user_message})
 
         while True:
+            tools = our_tools.tools + [{'type': 'web_search'}]
             response = await self._ai.responses.create(
                 input=self._history,
                 model=self.model,
                 reasoning=self.reasoning,
-                tools=our_tools.tools
+                tools=tools
             )
 
             self.usage.append(response.usage)

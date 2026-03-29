@@ -1,0 +1,296 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tic-Tac-Toe - Web</title>
+  <style>
+    :root {
+      --board-size: 3;
+      --cell: 120px;
+      --gap: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      background: #f5f7fb;
+    }
+    h1 { margin: 0; font-size: 2rem; }
+    .game {
+      display: grid;
+      grid-template-columns: repeat(3, var(--cell));
+      grid-gap: var(--gap);
+      padding: 8px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    .cell {
+      width: var(--cell);
+      height: var(--cell);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      font-weight: bold;
+      border: 2px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s ease;
+    }
+    .cell:hover { background: #f0f0f0; }
+    .cell.x { color: #d32f2f; }
+    .cell.o { color: #1976d2; }
+    #status {
+      font-weight: 600;
+      font-size: 1.05rem;
+      min-height: 1.2em;
+    }
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    select, button {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #fff;
+    }
+    button.primary {
+      background: #4caf50;
+      color: white;
+      border: none;
+    }
+    @media (max-width: 520px) {
+      :root { --cell: 90px; }
+      .cell { font-size: 54px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Tic-Tac-Toe</h1>
+
+  <div class="game" id="board" aria-label="Tic Tac Toe board" role="grid">
+    <!-- 9 cells -->
+    <div class="cell" tabindex="0" data-index="0" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="1" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="2" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="3" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="4" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="5" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="6" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="7" role="gridcell"></div>
+    <div class="cell" tabindex="0" data-index="8" role="gridcell"></div>
+  </div>
+
+  <div id="status" aria-live="polite">Current turn: X</div>
+
+  <div class="controls" style="margin-top:8px;">
+    <label>
+      Mode:
+      <select id="mode" aria-label="Game mode">
+        <option value="pvp">Two Players (PvP)</option>
+        <option value="pvc">Play vs Computer (PvC)</option>
+      </select>
+    </label>
+    <button id="reset" title="Start a new game">New Game</button>
+  </div>
+
+  <script>
+    // Game state
+    const X = 'X', O = 'O';
+    let board = Array(9).fill(null);
+    let currentPlayer = X;
+    let mode = 'pvp';
+    let gameOver = false;
+
+    const cells = Array.from(document.querySelectorAll('.cell'));
+    const statusEl = document.getElementById('status');
+    const modeEl = document.getElementById('mode');
+    const resetBtn = document.getElementById('reset');
+    const WIN_LINES = [
+      [0,1,2], [3,4,5], [6,7,8], // rows
+      [0,3,6], [1,4,7], [2,5,8], // cols
+      [0,4,8], [2,4,6]           // diags
+    ];
+
+    function checkWinner(b) {
+      for (const [a,b1,c] of WIN_LINES) {
+        if (board[a] && board[a] === board[b1] && board[a] === board[c]) {
+          return board[a];
+        }
+      }
+      return null;
+    }
+
+    function isDraw() {
+      return board.every(v => v === X || v === O);
+    }
+
+    function updateUI() {
+      cells.forEach((cell) => {
+        const idx = parseInt(cell.dataset.index, 10);
+        cell.textContent = board[idx] ? board[idx] : '';
+        cell.classList.remove('x','o');
+        if (board[idx] === X) cell.classList.add('x');
+        if (board[idx] === O) cell.classList.add('o');
+      });
+    }
+
+    function updateStatus(message) {
+      if (message) {
+        statusEl.textContent = message;
+      } else {
+        if (mode === 'pvc' && currentPlayer === O && !gameOver) {
+          statusEl.textContent = "CPU is thinking...";
+        } else {
+          statusEl.textContent = `Current turn: ${currentPlayer}`;
+        }
+      }
+    }
+
+    function placeAt(index, player) {
+      if (index < 0 || index > 8) return false;
+      if (board[index]) return false;
+      board[index] = player;
+      updateUI();
+      return true;
+    }
+
+    function makeMove(index) {
+      if (gameOver) return;
+      // In PvC mode, human is X and CPU is O. If it's CPU's turn, ignore click.
+      if (mode === 'pvc' && currentPlayer === O) return;
+
+      if (!placeAt(index, currentPlayer)) return;
+
+      const winner = checkWinner(board);
+      if (winner) {
+        updateStatus(`Player ${winner} wins!`);
+        gameOver = true;
+        return;
+      }
+      if (isDraw()) {
+        updateStatus("It's a draw!");
+        gameOver = true;
+        return;
+      }
+
+      // switch turn
+      currentPlayer = (currentPlayer === X) ? O : X;
+      updateStatus();
+
+      // If PvC and it's CPU's turn, make a move
+      if (mode === 'pvc' && currentPlayer === O && !gameOver) {
+        setTimeout(() => computerMove(), 250);
+      }
+    }
+
+    // Simple AI: win > block > center > corner > random
+    function computerMove() {
+      if (gameOver) return;
+      const ai = O;
+      const human = X;
+
+      function findWinningMove(player) {
+        for (const [a,b1,c] of WIN_LINES) {
+          const line = [board[a], board[b1], board[c]];
+          const countP = line.filter(v => v === player).length;
+          const countE = line.filter(v => v == null).length;
+          if (countP === 2 && countE === 1) {
+            if (!board[a]) return a;
+            if (!board[b1]) return b1;
+            if (!board[c]) return c;
+          }
+        }
+        return -1;
+      }
+
+      let index = findWinningMove(ai);
+      if (index === -1) index = findWinningMove(human); // block
+      if (index === -1 && !board[4]) index = 4; // center
+      if (index === -1) {
+        const corners = [0,2,6,8];
+        const emptyCorners = corners.filter(i => !board[i]);
+        if (emptyCorners.length) index = emptyCorners[Math.floor(Math.random()*emptyCorners.length)];
+      }
+      if (index === -1) {
+        const empties = board.map((v,i)=> v ? null : i).filter(i => i !== null);
+        if (empties.length) index = empties[Math.floor(Math.random()*empties.length)];
+        else index = -1;
+      }
+
+      if (index >= 0) {
+        placeAt(index, ai);
+        // check result after AI move
+        const winner = checkWinner(board);
+        if (winner) {
+          updateStatus(`Player ${winner} wins!`);
+          gameOver = true;
+          return;
+        }
+        if (isDraw()) {
+          updateStatus("It's a draw!");
+          gameOver = true;
+          return;
+        }
+        // back to human
+        currentPlayer = human;
+        updateStatus();
+      }
+    }
+
+    function resetGame() {
+      board = Array(9).fill(null);
+      currentPlayer = X;
+      gameOver = false;
+      updateUI();
+      updateStatus();
+      // If PvC and CPU is to move first? We keep X first, CPU will move after human if it's PvC.
+      if (mode === 'pvc' && currentPlayer === O) {
+        // Not expected now since current is X initially
+      }
+    }
+
+    // Event wiring
+    cells.forEach((cell) => {
+      cell.addEventListener('click', () => {
+        const idx = parseInt(cell.dataset.index, 10);
+        makeMove(idx);
+      });
+      cell.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const idx = parseInt(cell.dataset.index, 10);
+          makeMove(idx);
+        }
+      });
+    });
+
+    modeEl.addEventListener('change', (e) => {
+      mode = e.target.value;
+      resetGame();
+      updateStatus();
+    });
+    resetBtn.addEventListener('click', resetGame);
+
+    // Init
+    function init() {
+      resetGame();
+      updateStatus();
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
