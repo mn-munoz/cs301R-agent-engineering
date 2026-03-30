@@ -1,3 +1,9 @@
 # Report 
 
-Interesting thigs that I found is that oddly enough, without any context of what the numbers of the csv file are, gpt-5-nano gave me the most interesting results. It seemed that if the model doesn't seem sure of what a number is, it just creates a general variable such as n1, n2, and n3 instead of guessing. In the contrary, the other models were more often to guess, and the older the model, the more likely it is for it to guess wrong.
+So, when I first did this assignment I totally did it wrong and the JSON structure was placed on the prompt itself and not on the client. Now, with that approach I did saw some important differences. 
+
+On older models, the results were more umpredictable where they would add more fields or the lables were incorrect. The older models were faster, however. So there is a tradeoff for more accuracy. 
+
+Now when I did the assigment how it was supposed to be done I really didn't saw any improvements, mainly because they all got the correct answer. I even went all the way down to the o1 model that was released in 2024. I didn't used any older models because I got a BadRequest error.
+
+However from what I have found, having a structured output makes results more consistent across the board and is a valuable tool when trying to use agents as tools.
