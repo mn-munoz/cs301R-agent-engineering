@@ -1,0 +1,7 @@
+So pretty much what I did is use the code in image_desc.py since it did pretty much what the homework was asking about. Honestly it was pretty cool experience to see how to change images using the OpenAI API and also interesting to see the descriptions.
+
+Something that I did noticed, however, is how the descriptions don't really need the guardrail to protect anything that was copyrighted. For example I passed in several images of franchises such as marvel and disney and I could get a description perfectly, however it was the moment that I tried to modify them were I just couldn't and that was interesting to see the distinction between just giving a brief description and modification and how the AI distinguishes what type of protections it needs to implement. 
+
+Additionally I passed things in public domain such as the Mona Lisa and the Stary Night. The descriptions were good, but I was impressed that the description did not mentioned the name of the pictures considering how famous the paintings are. 
+
+Another thing that I noticed is that the API is really good when it comes to recoloring things, but awful at replacing things. For example, I passed in a picture near the supervolcano of Yellowstone National park and asked it to replace the bisons in the picture with wolves. From far away they looked like wolves. Kind off, however up close you could tell that those wolves were AI generated as they did NOT looked like wolves at all. However, when asking to change the blue of the super volcano to gold it did that flawlessly.
