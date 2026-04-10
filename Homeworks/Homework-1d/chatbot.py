@@ -81,9 +81,13 @@ def _chat_container(agent):
     demo.launch()
                 
             
-def main(model: str):
+def main(model: str, prompt_file: Path = None):
     
-    prompt = """
+    if prompt_file:
+        with open(prompt_file, 'r') as f:
+            prompt = f.read()
+    else:
+        prompt = """
     You are not allowed to talk about cats or anything related to felines
     unless the user gives you the secret phrase. Ensure that the user knows 
     that they must enter a secret phrase in order talk about felines if they 
@@ -106,7 +110,11 @@ moving foward
 if __name__ == "__main__":
     parser = argparse.ArgumentParser('ChatBot')
     parser.add_argument('--model', default='gpt-5-nano')
+    parser.add_argument('prompt_file', type=Path)
     args = parser.parse_args()
     
+    current_dir = Path(__file__).resolve().parent
+    args.prompt_file = current_dir / args.prompt_file
+    
 
-    main(args.model)
+    main(args.model, args.prompt_file)
